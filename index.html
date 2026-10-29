@@ -1,36 +1,33 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <title>Habit Tracker</title>
 <style>
-  :root { --bg:#0b1220; --card:#151f32; --accent:#6366f1; --text:#e5e7eb; --muted:#94a3b8; --danger:#ef4444; }
-  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif;}
-  body{background:var(--bg);color:var(--text);min-height:100vh;padding:24px;}
-  .wrap{max-width:480px;margin:0 auto;}
-  h1{font-size:26px;margin-bottom:4px;}
-  .sub{color:var(--muted);font-size:13px;margin-bottom:18px;}
-  .addrow{display:flex;gap:10px;margin-bottom:18px;}
-  .addrow input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid #1f2a44;background:var(--card);color:var(--text);font-size:14px;outline:none;}
-  .addrow input:focus{border-color:var(--accent);}
-  .addrow button{padding:12px 20px;border:none;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;}
-  .addrow button:hover{background:#4f46e5;}
-  .card{background:var(--card);border-radius:14px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
-  .cb{width:22px;height:22px;border-radius:6px;border:2px solid #334155;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;}
-  .cb.done{background:var(--accent);border-color:var(--accent);}
-  .name{flex:1;font-size:15px;}
-  .name.done{text-decoration:line-through;color:var(--muted);}
-  .del{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 8px;border-radius:8px;}
-  .del:hover{color:var(--danger);background:#1f2a44;}
-  .empty{text-align:center;color:var(--muted);padding:40px 0;}
-  .ai{margin-top:24px;background:var(--card);border-radius:14px;padding:14px;}
-  .ai h3{font-size:14px;margin-bottom:8px;color:var(--muted);}
-  .airow{display:flex;gap:8px;}
-  .airow input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid #1f2a44;background:#0f172a;color:var(--text);font-size:13px;outline:none;}
-  .airow button{padding:10px 14px;border:none;border-radius:10px;background:#10b981;color:#fff;font-weight:600;cursor:pointer;}
-  .aireply{margin-top:10px;font-size:13px;color:var(--text);white-space:pre-wrap;min-height:18px;}
-  .keyrow{display:flex;gap:8px;margin-bottom:8px;}
-  .keyrow input{flex:1;padding:8px 10px;border-radius:8px;border:1px solid #1f2a44;background:#0f172a;color:var(--text);font-size:12px;}
+:root{--bg:#0b1220;--card:#151f32;--accent:#6366f1;--text:#e5e7eb;--muted:#94a3b8;--danger:#ef4444;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif;}
+body{background:var(--bg);color:var(--text);min-height:100vh;padding:24px;}
+.wrap{max-width:480px;margin:0 auto;}
+h1{font-size:26px;margin-bottom:4px;}
+.sub{color:var(--muted);font-size:13px;margin-bottom:18px;}
+.addrow{display:flex;gap:10px;margin-bottom:18px;}
+.addrow input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid #1f2a44;background:var(--card);color:var(--text);font-size:14px;outline:none;}
+.addrow button{padding:12px 20px;border:none;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;}
+.card{background:var(--card);border-radius:14px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.cb{width:22px;height:22px;border-radius:6px;border:2px solid #334155;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;}
+.cb.done{background:var(--accent);border-color:var(--accent);}
+.name{flex:1;font-size:15px;}
+.name.done{text-decoration:line-through;color:var(--muted);}
+.del{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 8px;border-radius:8px;}
+.empty{text-align:center;color:var(--muted);padding:40px 0;}
+.ai{margin-top:24px;background:var(--card);border-radius:14px;padding:14px;}
+.ai h3{font-size:14px;margin-bottom:8px;color:var(--muted);}
+.keyrow input{width:100%;padding:8px 10px;border-radius:8px;border:1px solid #1f2a44;background:#0f172a;color:var(--text);font-size:12px;margin-bottom:8px;}
+.airow{display:flex;gap:8px;}
+.airow input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid #1f2a44;background:#0f172a;color:var(--text);font-size:13px;outline:none;}
+.airow button{padding:10px 14px;border:none;border-radius:10px;background:#10b981;color:#fff;font-weight:600;cursor:pointer;}
+.aireply{margin-top:10px;font-size:13px;color:var(--text);white-space:pre-wrap;min-height:18px;}
+.hint{font-size:11px;color:var(--muted);margin-bottom:8px;}
 </style>
 </head>
 <body>
@@ -44,11 +41,10 @@
   <div id="list"></div>
   <div class="ai">
     <h3>AI Assistant</h3>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Offline smart tips — no key needed. Ask about sleep, water, exercise, focus, stress, food, motivation, streaks, morning/evening routines.</div>
-    <div class="keyrow"><input id="key" type="password" placeholder="Optional Gemini key for real AI" /></div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Without a key you get smart offline tips. With a key you get real AI answers.</div>
+    <div class="hint">Offline smart tips — no key needed. Ask about sleep, water, exercise, focus, stress, food, motivation, streaks, morning/evening routines. Paste a Gemini key for real AI.</div>
+    <div class="keyrow"><input id="key" type="password" placeholder="Optional Gemini key (from aistudio.google.com)" /></div>
     <div class="airow">
-      <input id="q" placeholder="Ask for habit tips..." />
+      <input id="q" placeholder="Ask or say 'done: water'..." />
       <button id="ask">Ask</button>
     </div>
     <div class="aireply" id="reply"></div>
@@ -63,7 +59,6 @@ function render(){
   list.innerHTML='';
   const done=habits.filter(h=>h.done).length;
   document.getElementById('sub').textContent=habits.length?`${done} of ${habits.length} done today`:'Add your first habit';
-  if(habits.length && done===habits.length) setTimeout(confettiBurst,200);
   if(!habits.length){list.innerHTML='<div class="empty">No habits yet</div>';return;}
   habits.forEach((h,i)=>{
     const card=document.createElement('div');card.className='card';
@@ -85,75 +80,54 @@ document.getElementById('list').onclick=e=>{
   if(e.target.dataset.d!==undefined){habits.splice(e.target.dataset.d,1);save();render();}
 };
 const ADVICE={
-  sleep:'Sleep 7-9h. Fixed bedtime, cool dark room, no screens 1h before bed. Consistent wake time matters most.',
-  water:'Drink water right after waking. Keep a bottle visible. Aim ~2L/day. Link to meals.',
-  exercise:'Start 10 min/day. Walk, stretch, bodyweight. Same time daily builds automaticity.',
-  read:'10 pages/day. Book on pillow. Audiobooks count. Read before sleep.',
-  focus:'Pomodoro 25/5. Silence notifications. One task at a time. Deep work blocks.',
-  stress:'4-7-8 breathing. Short walks. Journal 3 wins. Limit news/social.',
-  food:'One healthy meal/day. Prep snacks. Water before eating. Add veggies.',
-  morning:'Wake same time. Hydrate. 5-min move. Plan top 3. No phone first 30 min.',
-  evening:'Dim lights. Journal. Set tomorrow goals. No phone in bed. Cool room.',
-  motivation:'Action before motivation. Do 2 min. Momentum follows. Celebrate small wins.',
-  streak:'Never miss twice. One miss is human; two is a new (bad) habit.',
-  habit:'Make it obvious, attractive, easy, satisfying (Atomic Habits). Stack on existing routines.',
-  procrastination:'2-minute rule: just start. Break task into tiny steps. Remove friction.',
-  energy:'Sleep, hydrate, move, eat protein. Short walks beat caffeine crashes.',
-  goal:'Set SMART goals. Break into daily actions. Review weekly.',
-  default:null
+  sleep:'Sleep 7-9h. Fixed bedtime, cool dark room, no screens 1h before bed.',
+  water:'Drink water right after waking. Keep a bottle visible. Aim ~2L/day.',
+  exercise:'Start 10 min/day. Walk, stretch, bodyweight. Same time daily.',
+  read:'10 pages/day. Book on pillow. Audiobooks count.',
+  focus:'Pomodoro 25/5. Silence notifications. One task at a time.',
+  stress:'4-7-8 breathing. Short walks. Journal 3 wins.',
+  food:'One healthy meal/day. Prep snacks. Water before eating.',
+  morning:'Wake same time. Hydrate. 5-min move. Plan top 3.',
+  evening:'Dim lights. Journal. Set tomorrow goals. No phone in bed.',
+  motivation:'Action before motivation. Do 2 min. Momentum follows.',
+  streak:'Never miss twice. One miss is human; two is a pattern.',
+  habit:'Make it obvious, attractive, easy, satisfying. Stack on routines.',
+  procrastination:'2-minute rule: just start. Break into tiny steps.',
+  energy:'Sleep, hydrate, move, eat protein.',
+  goal:'Set SMART goals. Break into daily actions. Review weekly.'
 };
-const FALLBACKS=[
-  'Build habits one at a time. Track daily and celebrate small wins — consistency beats perfection.',
-  'Start tiny: 2 minutes is enough to begin. Momentum grows from small starts.',
-  'Pair your new habit with an existing routine (habit stacking) to make it stick.',
-  'Never miss twice. One off day is human; two becomes a pattern.',
-  'Track visibly — a simple checkmark calendar boosts motivation.',
-  'Remove friction: lay out clothes, prep water, open the book the night before.'
-];
+const FALLBACKS=['Build habits one at a time. Track daily, celebrate small wins.','Start tiny: 2 minutes is enough.','Pair new habit with existing routine.','Never miss twice.','Track visibly with checkmarks.','Remove friction the night before.'];
 document.getElementById('ask').onclick=async()=>{
   const key=document.getElementById('key').value.trim();
   const q=document.getElementById('q').value.trim();
   const reply=document.getElementById('reply');
   if(!q){reply.textContent='Ask me anything about habits.';return;}
-  // tick habits mentioned in the message
   const ql=q.toLowerCase();
   let ticked=[];
   habits.forEach((h,i)=>{ if(ql.includes(h.name.toLowerCase())){ habits[i].done=true; ticked.push(h.name); } });
   if(ticked.length){ save(); render(); }
-  let prefix=ticked.length? 'Marked done: '+ticked.join(', ')+'.\n':'';
+  let prefix=ticked.length? 'Marked done: '+ticked.join(', ')+'. ':'';
   if(key){
     reply.textContent='Thinking...';
     try{
       const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'You are a habit coach. Habits: '+habits.map(h=>h.name+(h.done?' (done)':'')).join(', ')+'. User says: '+q}]})});
       const d=await r.json();
-      if(d.error){reply.textContent=prefix+'(AI unavailable: '+d.error.message+') '+FALLBACKS[Math.floor(Math.random()*FALLBACKS.length)];return;}
+      if(d.error){reply.textContent=prefix+d.error.message;return;}
       const text=d.candidates?.[0]?.content?.parts?.[0]?.text||'No reply.';
       reply.textContent=prefix+text;
       document.getElementById('q').value='';
       return;
-    }catch(err){reply.textContent=prefix+FALLBACKS[Math.floor(Math.random()*FALLBACKS.length)];return;}
+    }catch(err){reply.textContent=prefix+'Network error.';return;}
   }
-  // offline fallback
   let ans=null;
-  for(const k in ADVICE){ if(k!=='default' && ql.includes(k)){ans=ADVICE[k];break;} }
+  for(const k in ADVICE){ if(ql.includes(k)){ans=ADVICE[k];break;} }
   if(!ans) ans=FALLBACKS[Math.floor(Math.random()*FALLBACKS.length)];
   const done=habits.filter(h=>h.done).length;
-  if(habits.length) ans+=' You have '+done+' of '+habits.length+' habits done today.';
+  if(habits.length) ans+=' ('+done+'/'+habits.length+' done today)';
   reply.textContent=prefix+ans;
   document.getElementById('q').value='';
 };
 render();
-</script>
-<script>
-function confettiBurst(){
-  for(let i=0;i<60;i++){
-    const c=document.createElement('div');
-    c.style.cssText='position:fixed;left:50%;top:50%;width:8px;height:8px;border-radius:50%;background:hsl('+Math.random()*360+',80%,60%);pointer-events:none;z-index:9999;';
-    document.body.appendChild(c);
-    const a=Math.random()*Math.PI*2, d=80+Math.random()*120;
-    c.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+Math.cos(a)*d+'px,'+Math.sin(a)*d+'px)',opacity:0}],{duration:900,easing:'ease-out'}).onfinish=()=>c.remove();
-  }
-}
 </script>
 </body>
 </html>
