@@ -1,17 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8" />
 <title>Habit Tracker</title>
-<link rel="stylesheet" href="styles.css" />
+<style>
+  :root { --bg:#0b1220; --card:#151f32; --accent:#6366f1; --text:#e5e7eb; --muted:#94a3b8; --danger:#ef4444; }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif;}
+  body{background:var(--bg);color:var(--text);min-height:100vh;padding:24px;}
+  .wrap{max-width:480px;margin:0 auto;}
+  h1{font-size:26px;margin-bottom:4px;}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:18px;}
+  .addrow{display:flex;gap:10px;margin-bottom:18px;}
+  .addrow input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid #1f2a44;background:var(--card);color:var(--text);font-size:14px;outline:none;}
+  .addrow input:focus{border-color:var(--accent);}
+  .addrow button{padding:12px 20px;border:none;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;}
+  .addrow button:hover{background:#4f46e5;}
+  .card{background:var(--card);border-radius:14px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+  .cb{width:22px;height:22px;border-radius:6px;border:2px solid #334155;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;}
+  .cb.done{background:var(--accent);border-color:var(--accent);}
+  .name{flex:1;font-size:15px;}
+  .name.done{text-decoration:line-through;color:var(--muted);}
+  .del{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 8px;border-radius:8px;}
+  .del:hover{color:var(--danger);background:#1f2a44;}
+  .empty{text-align:center;color:var(--muted);padding:40px 0;}
+  .ai{margin-top:24px;background:var(--card);border-radius:14px;padding:14px;}
+  .ai h3{font-size:14px;margin-bottom:8px;color:var(--muted);}
+  .airow{display:flex;gap:8px;}
+  .airow input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid #1f2a44;background:#0f172a;color:var(--text);font-size:13px;outline:none;}
+  .airow button{padding:10px 14px;border:none;border-radius:10px;background:#10b981;color:#fff;font-weight:600;cursor:pointer;}
+  .aireply{margin-top:10px;font-size:13px;color:var(--text);white-space:pre-wrap;min-height:18px;}
+  .keyrow{display:flex;gap:8px;margin-bottom:8px;}
+  .keyrow input{flex:1;padding:8px 10px;border-radius:8px;border:1px solid #1f2a44;background:#0f172a;color:var(--text);font-size:12px;}
+</style>
 </head>
 <body>
+<div class="wrap">
   <h1>Habit Tracker</h1>
-  <div class="add">
+  <div class="sub" id="sub">0 of 0 done today</div>
+  <div class="addrow">
     <input id="habitInput" placeholder="New habit..." />
-    <button id="addBtn">Add</button>
+    <button id="addBtn">+ Add</button>
   </div>
-  <ul id="list"></ul>
-  <script src="app.js"></script>
+  <div id="list"></div>
+  <div class="ai">
+    <h3>AI Assistant (optional — paste OpenAI key)</h3>
+    <div class="keyrow"><input id="key" type="password" placeholder="sk-..." /></div>
+    <div class="airow">
+      <input id="q" placeholder="Ask for habit tips..." />
+      <button id="ask">Ask</button>
+    </div>
+    <div class="aireply" id="reply"></div>
+  </div>
+</div>
+<script>
+const KEY='habits';
+let habits=JSON.parse(localStorage.getItem(KEY)||'[]');
+function save(){localStorage.setItem(KEY,JSON.stringify(habits));}
+function render(){
+  const list=document.getElementById('list');
+  list.innerHTML='';
+  const done=habits.filter(h=>h.done).length;
+  document.getElementById('sub').textContent=habits.length?`${done} of ${habits.length} done today`:'Add your first habit';
+  if(!habits.length){list.innerHTML='<div class="empty">No habits yet</div>';return;}
+  habits.forEach((h,i)=>{
+    const card=document.createElement('div');card.className='card';
+    card.innerHTML=`<div class="cb ${h.done?'done':''}" data-i="${i}">${h.done?'✓':''}</div><div class="name ${h.done?'done':''}">${escape(h.name)}</div><button class="del" data-d="${i}">✕</button>`;
+    list.appendChild(card);
+  });
+}
+function escape(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+document.getElementById('addBtn').onclick=()=>{
+  const v=document.getElementById('habitInput').value.trim();
+  if(!v)return;
+  habits.push({name:v,done:false});
+  document.getElementById('habitInput').value='';
+  save();render();
+};
+document.getElementById('habitInput').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('addBtn').click();});
+document.getElementById('list').onclick=e=>{
+  if(e.target.dataset.i!==undefined){habits[e.target.dataset.i].done=!habits[e.target.dataset.i].done;save();render();}
+  if(e.target.dataset.d!==undefined){habits.splice(e.target.dataset.d,1);save();render();}
+};
+document.getElementById('ask').onclick=async()=>{
+  const key=document.getElementById('key').value.trim();
+  const q=document.getElementById('q').value.trim();
+  const reply=document.getElementById('reply');
+  if(!q){reply.textContent='Type a question.';return;}
+  if(!key){reply.textContent='Paste an OpenAI API key above to use the AI.';return;}
+  reply.textContent='Thinking...';
+  try{
+    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:q}],max_tokens:200})});
+    const d=await r.json();
+    reply.textContent=d.choices?.[0]?.message?.content||'No reply.';
+  }catch(err){reply.textContent='Error: '+err.message;}
+};
+render();
+</script>
 </body>
 </html>

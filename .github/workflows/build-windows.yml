@@ -8,7 +8,7 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: '3.11' }
       - run: pip install pyinstaller
-      - run: pyinstaller --onefile --windowed --name HabitTracker habit_tracker.py
+      - run: pyinstaller --onefile --windowed --name HabitTracker --add-data "index.html;." habit_tracker.py
       - uses: actions/upload-artifact@v4
         with:
           name: HabitTracker-windows
