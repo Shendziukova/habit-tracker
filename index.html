@@ -86,7 +86,11 @@ document.getElementById('ask').onclick=async()=>{
   const q=document.getElementById('q').value.trim();
   const reply=document.getElementById('reply');
   if(!q){reply.textContent='Type a question.';return;}
-  if(!key){reply.textContent='Paste an OpenAI API key above to use the AI.';return;}
+  if(!key){
+    const tips=['Start small: one habit at a time.','Consistency beats intensity.','Track daily, even tiny wins count.','Pair a new habit with an existing routine.','Don't break the chain — streaks motivate.'];
+    reply.textContent=tips[Math.floor(Math.random()*tips.length)];
+    return;
+  }
   reply.textContent='Thinking...';
   try{
     const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:q}],max_tokens:200})});
