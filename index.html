@@ -81,21 +81,35 @@ document.getElementById('list').onclick=e=>{
   if(e.target.dataset.d!==undefined){habits.splice(e.target.dataset.d,1);save();render();}
 };
 const ADVICE={
-  sleep:'Try a consistent bedtime and 7-8 hours of sleep. Avoid screens 1 hour before bed.',
-  water:'Drink a glass of water right after waking up. Keep a bottle visible.',
-  exercise:'Start with 10 minutes a day. Walk, stretch, or do bodyweight moves.',
-  read:'Read 10 pages a day. Keep a book on your pillow.',
-  focus:'Use 25-minute focus blocks (Pomodoro) with 5-minute breaks.',
-  stress:'Breathe 4-7-8: inhale 4s, hold 7s, exhale 8s. Repeat 4 times.',
-  food:'Add one healthy meal a day. Prep snacks in advance.',
-  default:'Great question! Build habits one at a time, track daily, and celebrate small wins. Consistency beats perfection.'
+  sleep:'Try a consistent bedtime and 7-8 hours of sleep. Avoid screens 1 hour before bed. A cool dark room helps.',
+  water:'Drink a glass of water right after waking up. Keep a bottle visible at your desk.',
+  exercise:'Start with 10 minutes a day. Walk, stretch, or do bodyweight moves. Consistency over intensity.',
+  read:'Read 10 pages a day. Keep a book on your pillow. Audiobooks count too.',
+  focus:'Use 25-minute focus blocks (Pomodoro) with 5-minute breaks. Silence notifications.',
+  stress:'Breathe 4-7-8: inhale 4s, hold 7s, exhale 8s. Repeat 4 times. Short walks reset the mind.',
+  food:'Add one healthy meal a day. Prep snacks in advance. Drink water before eating.',
+  morning:'Win the morning: wake at the same time, hydrate, move 5 minutes, plan top 3 tasks.',
+  evening:'Wind down: dim lights, journal 3 wins, set tomorrow goals, no phone in bed.',
+  motivation:'Motivation follows action. Do 2 minutes of the habit — momentum builds.',
+  streak:'Never miss twice. One missed day is fine; two is a new habit.',
+  sleep2:'Nap 20 minutes max before 3pm if needed. Avoid caffeine after 2pm.',
+  default:null
 };
+const FALLBACKS=[
+  'Build habits one at a time. Track daily and celebrate small wins — consistency beats perfection.',
+  'Start tiny: 2 minutes is enough to begin. Momentum grows from small starts.',
+  'Pair your new habit with an existing routine (habit stacking) to make it stick.',
+  'Never miss twice. One off day is human; two becomes a pattern.',
+  'Track visibly — a simple checkmark calendar boosts motivation.',
+  'Remove friction: lay out clothes, prep water, open the book the night before.'
+];
 document.getElementById('ask').onclick=()=>{
   const q=document.getElementById('q').value.trim().toLowerCase();
   const reply=document.getElementById('reply');
   if(!q){reply.textContent='Ask me anything about habits.';return;}
-  let ans=ADVICE.default;
-  for(const k in ADVICE){ if(q.includes(k)){ans=ADVICE[k];break;} }
+  let ans=null;
+  for(const k in ADVICE){ if(k!=='default' && q.includes(k)){ans=ADVICE[k];break;} }
+  if(!ans) ans=FALLBACKS[Math.floor(Math.random()*FALLBACKS.length)];
   const done=habits.filter(h=>h.done).length;
   if(habits.length) ans+=' You have '+done+' of '+habits.length+' habits done today.';
   reply.textContent=ans;
