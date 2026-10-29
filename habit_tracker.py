@@ -1,39 +1,41 @@
 import json, os, tkinter as tk
-from tkinter import ttk
 
 DATA = os.path.join(os.path.expanduser("~"), ".habit_tracker.json")
+BG = "#0b1220"; CARD = "#151f32"; ACCENT = "#6366f1"; TEXT = "#e5e7eb"; MUTED = "#94a3b8"
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Habit Tracker")
-        self.geometry("460x700")
-        self.minsize(400, 500)
-        self.configure(bg="#0f172a")
+        self.geometry("440x720")
+        self.minsize(380, 500)
+        self.configure(bg=BG)
         self.habits = self.load()
 
-        header = tk.Label(self, text="Habit Tracker", font=("Segoe UI", 20, "bold"),
-                          bg="#0f172a", fg="#e2e8f0")
-        header.pack(pady=(20, 10))
+        tk.Label(self, text="Habit Tracker", font=("Helvetica", 22, "bold"),
+                 bg=BG, fg=TEXT).pack(pady=(24, 4))
+        self.subtitle = tk.Label(self, text="", font=("Helvetica", 11), bg=BG, fg=MUTED)
+        self.subtitle.pack(pady=(0, 16))
 
-        top = tk.Frame(self, bg="#0f172a")
-        top.pack(fill="x", padx=20, pady=10)
-        self.entry = tk.Entry(top, font=("Segoe UI", 13), bg="#1e293b", fg="#e2e8f0",
-                              insertbackground="#e2e8f0", relief="flat")
-        self.entry.pack(side="left", fill="x", expand=True, ipady=6)
+        top = tk.Frame(self, bg=BG)
+        top.pack(fill="x", padx=22, pady=(0, 14))
+        self.entry = tk.Entry(top, font=("Helvetica", 13), bg=CARD, fg=TEXT,
+                              insertbackground=TEXT, relief="flat", bd=0)
+        self.entry.pack(side="left", fill="x", expand=True, ipady=10, ipadx=12)
         self.entry.bind("<Return>", lambda e: self.add())
-        addbtn = tk.Button(top, text="Add", command=self.add, bg="#3b82f6", fg="white",
-                           relief="flat", padx=16, pady=6, cursor="hand2")
-        addbtn.pack(side="left", padx=(10, 0))
+        tk.Button(top, text="+ Add", command=self.add, bg=ACCENT, fg="white",
+                  relief="flat", font=("Helvetica", 12, "bold"), padx=18, pady=8,
+                  cursor="hand2", activebackground="#4f46e5", activeforeground="white"
+                  ).pack(side="left", padx=(12, 0))
 
-        self.canvas = tk.Canvas(self, bg="#0f172a", highlightthickness=0)
-        self.scroll = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
-        self.inner = tk.Frame(self.canvas, bg="#0f172a")
+        self.canvas = tk.Canvas(self, bg=BG, highlightthickness=0)
+        sb = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.inner = tk.Frame(self.canvas, bg=BG)
         self.inner.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
-        self.canvas.create_window((0, 0), window=self.inner, anchor="nw")
-        self.canvas.configure(yscrollcommand=self.scroll.set)
-        self.canvas.pack(side="left", fill="both", expand=True, padx=20)
-        self.scroll.pack(side="right", fill="y")
+        self.canvas.create_window((0, 0), window=self.inner, anchor="nw", width=400)
+        self.canvas.configure(yscrollcommand=sb.set)
+        self.canvas.pack(side="left", fill="both", expand=True, padx=22)
+        sb.pack(side="right", fill="y", padx=(0, 8))
 
         self.render()
 
@@ -48,41 +50,45 @@ class App(tk.Tk):
 
     def add(self):
         v = self.entry.get().strip()
-        if not v:
-            return
+        if not v: return
         self.habits.append({"name": v, "done": False})
         self.entry.delete(0, "end")
-        self.save()
-        self.render()
+        self.save(); self.render()
 
     def toggle(self, i):
         self.habits[i]["done"] = not self.habits[i]["done"]
-        self.save()
-        self.render()
+        self.save(); self.render()
 
     def delete(self, i):
         del self.habits[i]
-        self.save()
-        self.render()
+        self.save(); self.render()
 
     def render(self):
-        for w in self.inner.winfo_children():
-            w.destroy()
+        for w in self.inner.winfo_children(): w.destroy()
+        done = sum(1 for h in self.habits if h["done"])
+        total = len(self.habits)
+        self.subtitle.config(text=f"{done} of {total} done today" if total else "Add your first habit")
+        if not self.habits:
+            tk.Label(self.inner, text="No habits yet", font=("Helvetica", 12),
+                     bg=BG, fg=MUTED).pack(pady=40)
+            return
         for i, h in enumerate(self.habits):
-            row = tk.Frame(self.inner, bg="#1e293b", pady=8)
-            row.pack(fill="x", pady=4)
+            card = tk.Frame(self.inner, bg=CARD)
+            card.pack(fill="x", pady=6, ipady=4)
             var = tk.BooleanVar(value=h["done"])
-            cb = tk.Checkbutton(row, variable=var, command=lambda i=i: self.toggle(i),
-                                bg="#1e293b", fg="#e2e8f0", selectcolor="#1e293b",
-                                activebackground="#1e293b")
-            cb.pack(side="left", padx=8)
-            lbl = tk.Label(row, text=h["name"], bg="#1e293b", fg="#e2e8f0",
-                           font=("Segoe UI", 12), anchor="w")
+            cb = tk.Checkbutton(card, variable=var, command=lambda i=i: self.toggle(i),
+                                bg=CARD, fg=TEXT, selectcolor=CARD, activebackground=CARD,
+                                font=("Helvetica", 13))
+            cb.pack(side="left", padx=(12, 6))
+            name = tk.Label(card, text=h["name"], font=("Helvetica", 13), bg=CARD,
+                            fg=TEXT if not h["done"] else MUTED, anchor="w")
             if h["done"]:
-                lbl.config(fg="#64748b")
-            lbl.pack(side="left", fill="x", expand=True, padx=4)
-            tk.Button(row, text="x", command=lambda i=i: self.delete(i),
-                      bg="#ef4444", fg="white", relief="flat", padx=10).pack(side="right", padx=8)
+                name.config(font=("Helvetica", 13, "overstrike"))
+            name.pack(side="left", fill="x", expand=True, pady=8)
+            tk.Button(card, text="✕", command=lambda i=i: self.delete(i),
+                      bg=CARD, fg=MUTED, relief="flat", font=("Helvetica", 12),
+                      activebackground=CARD, activeforeground="#ef4444", cursor="hand2"
+                      ).pack(side="right", padx=12)
 
 if __name__ == "__main__":
     App().mainloop()
