@@ -126,12 +126,12 @@ document.getElementById('ask').onclick=async()=>{
     try{
       const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'You are a habit coach. Habits: '+habits.map(h=>h.name+(h.done?' (done)':'')).join(', ')+'. User says: '+q}]})});
       const d=await r.json();
-      if(d.error){reply.textContent=prefix+'Key error: '+d.error.message+'. (Need a key from aistudio.google.com, starts with AIza.)';return;}
+      if(d.error){reply.textContent=prefix+'(AI unavailable: '+d.error.message+') '+FALLBACKS[Math.floor(Math.random()*FALLBACKS.length)];return;}
       const text=d.candidates?.[0]?.content?.parts?.[0]?.text||'No reply.';
       reply.textContent=prefix+text;
       document.getElementById('q').value='';
       return;
-    }catch(err){reply.textContent=prefix+'Network error: '+err.message;return;}
+    }catch(err){reply.textContent=prefix+FALLBACKS[Math.floor(Math.random()*FALLBACKS.length)];return;}
   }
   // offline fallback
   let ans=null;
