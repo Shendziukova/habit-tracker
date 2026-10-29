@@ -60,6 +60,7 @@ function render(){
   list.innerHTML='';
   const done=habits.filter(h=>h.done).length;
   document.getElementById('sub').textContent=habits.length?`${done} of ${habits.length} done today`:'Add your first habit';
+  if(habits.length && done===habits.length) setTimeout(confettiBurst,200);
   if(!habits.length){list.innerHTML='<div class="empty">No habits yet</div>';return;}
   habits.forEach((h,i)=>{
     const card=document.createElement('div');card.className='card';
@@ -116,6 +117,17 @@ document.getElementById('ask').onclick=()=>{
   document.getElementById('q').value='';
 };
 render();
+</script>
+<script>
+function confettiBurst(){
+  for(let i=0;i<60;i++){
+    const c=document.createElement('div');
+    c.style.cssText='position:fixed;left:50%;top:50%;width:8px;height:8px;border-radius:50%;background:hsl('+Math.random()*360+',80%,60%);pointer-events:none;z-index:9999;';
+    document.body.appendChild(c);
+    const a=Math.random()*Math.PI*2, d=80+Math.random()*120;
+    c.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+Math.cos(a)*d+'px,'+Math.sin(a)*d+'px)',opacity:0}],{duration:900,easing:'ease-out'}).onfinish=()=>c.remove();
+  }
+}
 </script>
 </body>
 </html>
