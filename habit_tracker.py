@@ -23,10 +23,13 @@ class App(tk.Tk):
                               insertbackground=TEXT, relief="flat", bd=0)
         self.entry.pack(side="left", fill="x", expand=True, ipady=10, ipadx=12)
         self.entry.bind("<Return>", lambda e: self.add())
-        tk.Button(top, text="+ Add", command=self.add, bg=ACCENT, fg="white",
+        self.entry.focus_set()
+        _btn = tk.Button(top, text="+ Add", command=self.add, bg=ACCENT, fg="white",
                   relief="flat", font=("Helvetica", 12, "bold"), padx=18, pady=8,
                   cursor="hand2", activebackground="#4f46e5", activeforeground="white"
-                  ).pack(side="left", padx=(12, 0))
+                  )
+        _btn.pack(side="left", padx=(12, 0))
+        _btn.bind("<Button-1>", lambda e: self.add())
 
         self.canvas = tk.Canvas(self, bg=BG, highlightthickness=0)
         sb = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
