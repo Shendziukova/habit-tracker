@@ -45,7 +45,7 @@
   <div class="ai">
     <h3>AI Assistant</h3>
     <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Offline smart tips — no key needed. Ask about sleep, water, exercise, focus, stress, food, motivation, streaks, morning/evening routines.</div>
-    <div class="keyrow"><input id="key" type="password" placeholder="Optional OpenAI key (sk-...) for real AI" /></div>
+    <div class="keyrow"><input id="key" type="password" placeholder="Optional Gemini key for real AI" /></div>
     <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Without a key you get smart offline tips. With a key you get real AI answers.</div>
     <div class="airow">
       <input id="q" placeholder="Ask for habit tips..." />
@@ -115,24 +115,31 @@ document.getElementById('ask').onclick=async()=>{
   const q=document.getElementById('q').value.trim();
   const reply=document.getElementById('reply');
   if(!q){reply.textContent='Ask me anything about habits.';return;}
+  // tick habits mentioned in the message
+  const ql=q.toLowerCase();
+  let ticked=[];
+  habits.forEach((h,i)=>{ if(ql.includes(h.name.toLowerCase())){ habits[i].done=true; ticked.push(h.name); } });
+  if(ticked.length){ save(); render(); }
+  let prefix=ticked.length? 'Marked done: '+ticked.join(', ')+'.\n':'';
   if(key){
     reply.textContent='Thinking...';
     try{
-      const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:q}],max_tokens:200})});
+      const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'You are a habit coach. Habits: '+habits.map(h=>h.name+(h.done?' (done)':'')).join(', ')+'. User says: '+q}]})});
       const d=await r.json();
-      if(d.error){reply.textContent='Error: '+d.error.message;return;}
-      reply.textContent=d.choices?.[0]?.message?.content||'No reply.';
+      if(d.error){reply.textContent=prefix+'Error: '+d.error.message;return;}
+      const text=d.candidates?.[0]?.content?.parts?.[0]?.text||'No reply.';
+      reply.textContent=prefix+text;
       document.getElementById('q').value='';
       return;
-    }catch(err){reply.textContent='Error: '+err.message;return;}
+    }catch(err){reply.textContent=prefix+'Error: '+err.message;return;}
   }
+  // offline fallback
   let ans=null;
-  const ql=q.toLowerCase();
   for(const k in ADVICE){ if(k!=='default' && ql.includes(k)){ans=ADVICE[k];break;} }
   if(!ans) ans=FALLBACKS[Math.floor(Math.random()*FALLBACKS.length)];
   const done=habits.filter(h=>h.done).length;
   if(habits.length) ans+=' You have '+done+' of '+habits.length+' habits done today.';
-  reply.textContent=ans;
+  reply.textContent=prefix+ans;
   document.getElementById('q').value='';
 };
 render();
